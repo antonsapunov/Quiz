@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
+import android.widget.Toast
 import com.ToxicBakery.viewpager.transforms.CubeOutTransformer
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -46,10 +47,11 @@ class MainActivity : FragmentActivity() {
 
         launch(UI) {
             val result = QuestionsRepository.readQuestions(category, complexity).await()
-//            if (result.responseCode != 0) {
-//                Toast.makeText(this@MainActivity, "This test is not available now, try later", Toast.LENGTH_SHORT).show()
-//                return@launch
-//            }
+            if (result.responseCode != 0) {
+                Toast.makeText(this@MainActivity, "This test is not available now, try later", Toast.LENGTH_LONG).show()
+                finish()
+                return@launch
+            }
             questionList = result.questions
             Log.d("log_tag", result.toString())
             pager.adapter = pagerAdapter
@@ -91,8 +93,6 @@ class MainActivity : FragmentActivity() {
 
     fun end() {
         if (actionCounter == END) {
-//            val int = Intent(this, SettingsActivity::class.java)
-//            startActivity(int)
             startActivity(ResultActivity.newIntent(this, counter))
         }
     }
