@@ -25,7 +25,7 @@ object QuestionsRepository {
     }
 
     suspend fun readQuestions(category: Int, complexity: String): Call<Entity> {
-        Log.d("asf", api.readQuestions(10, category, complexity).request().url().toString())
+        Log.d("asf", api.readQuestions(10, category, complexity.toLowerCase()).request().url().toString())
         return api.readQuestions(10, category, complexity.toLowerCase())
     }
 }

@@ -25,6 +25,7 @@ class QuestionFragment : Fragment() {
     private lateinit var secondAnswer: Button
     private lateinit var thirdAnswer: Button
     private lateinit var fourthAnswer:Button
+    private var handler: Handler? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,20 +74,21 @@ class QuestionFragment : Fragment() {
     }
 
     fun check(button: Button) {
+        disableButtons()
         val green = Color.argb(100, 0, 255, 0)
         val red = Color.argb(100, 255, 0, 0)
         if (button.text == (Html.fromHtml((question as Question).correct_answer))) {
             button.setBackgroundColor(green)
-            disableButtons()
             (activity as MainActivity).counter()
-            val handler = Handler()
-            handler.postDelayed({ (activity as MainActivity).slide() }, 500)
         } else {
             button.setBackgroundColor(red)
-            disableButtons()
-            val handler = Handler()
-            handler.postDelayed({ (activity as MainActivity).slide() }, 500)
         }
+        handler = Handler()
+        handler?.postDelayed({
+            if (pageNumber!! < 9) {
+                (activity as MainActivity).slide()
+            }
+        }, 500)
         (activity as MainActivity).actionCounter()
         (activity as MainActivity).end()
     }
@@ -96,6 +98,11 @@ class QuestionFragment : Fragment() {
         secondAnswer.isClickable = false
         thirdAnswer.isClickable = false
         fourthAnswer.isClickable = false
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler?.removeCallbacksAndMessages(null)
     }
 
     companion object {

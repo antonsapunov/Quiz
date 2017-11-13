@@ -19,31 +19,37 @@ import java.util.*
 
 class MainActivity : FragmentActivity() {
 
-    val TAG = "myLogs"
     val PAGE_COUNT = 10
 
-    lateinit var pager: ViewPager
-    lateinit var pagerAdapter: PagerAdapter
+    private lateinit var pager: ViewPager
+    private lateinit var pagerAdapter: PagerAdapter
 
     var questionList: List<Question> = ArrayList()
     private var counter: Int = 0
     private var actionCounter: Int = 0
-    private val END: Int = 9
+    private val END: Int = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        counter = 0
+        actionCounter = 0
+
         pager = findViewById(R.id.question_view_pager)
         pagerAdapter = MyFragmentPagerAdapter(supportFragmentManager)
         pager.setPageTransformer(true, CubeOutTransformer())
+        pager.offscreenPageLimit = 10
 
-        val intent = intent
         val category = intent.getIntExtra(CATEGORY, 0)
         val complexity = intent.getStringExtra(COMPLEXITY)
 
         launch(UI) {
             val result = QuestionsRepository.readQuestions(category, complexity).await()
+//            if (result.responseCode != 0) {
+//                Toast.makeText(this@MainActivity, "This test is not available now, try later", Toast.LENGTH_SHORT).show()
+//                return@launch
+//            }
             questionList = result.questions
             Log.d("log_tag", result.toString())
             pager.adapter = pagerAdapter
@@ -80,11 +86,14 @@ class MainActivity : FragmentActivity() {
 
     fun actionCounter() {
         actionCounter++
+        Log.d("action", actionCounter.toString())
     }
 
     fun end() {
         if (actionCounter == END) {
-            startActivity(Intent(this, SettingsActivity::class.java))
+//            val int = Intent(this, SettingsActivity::class.java)
+//            startActivity(int)
+            startActivity(ResultActivity.newIntent(this, counter))
         }
     }
 

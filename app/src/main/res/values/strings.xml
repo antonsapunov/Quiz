@@ -38,4 +38,5 @@
         <item>Medium</item>
         <item>Hard</item>
     </string-array>
+    <string name="try_again">Try Again</string>
 </resources>
