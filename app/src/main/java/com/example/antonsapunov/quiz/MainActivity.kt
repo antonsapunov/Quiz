@@ -10,8 +10,9 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
+import android.widget.ProgressBar
 import android.widget.Toast
-import com.ToxicBakery.viewpager.transforms.CubeOutTransformer
+import com.ToxicBakery.viewpager.transforms.ZoomOutSlideTransformer
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import ru.gildor.coroutines.retrofit.await
@@ -24,6 +25,7 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var pager: ViewPager
     private lateinit var pagerAdapter: PagerAdapter
+    private lateinit var progressBar: ProgressBar
 
     var questionList: List<Question> = ArrayList()
     private var counter: Int = 0
@@ -34,18 +36,21 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        progressBar = findViewById(R.id.progressBar)
+
         counter = 0
         actionCounter = 0
 
         pager = findViewById(R.id.question_view_pager)
         pagerAdapter = MyFragmentPagerAdapter(supportFragmentManager)
-        pager.setPageTransformer(true, CubeOutTransformer())
+        pager.setPageTransformer(true, ZoomOutSlideTransformer())
         pager.offscreenPageLimit = 10
 
         val category = intent.getIntExtra(CATEGORY, 0)
         val complexity = intent.getStringExtra(COMPLEXITY)
 
         launch(UI) {
+            progressBar.visibility = ProgressBar.VISIBLE
             val result = QuestionsRepository.readQuestions(category, complexity).await()
             if (result.responseCode != 0) {
                 Toast.makeText(this@MainActivity, "This test is not available now, try later", Toast.LENGTH_LONG).show()
@@ -54,6 +59,7 @@ class MainActivity : FragmentActivity() {
             }
             questionList = result.questions
             Log.d("log_tag", result.toString())
+            progressBar.visibility = ProgressBar.INVISIBLE
             pager.adapter = pagerAdapter
         }
 
