@@ -73,7 +73,7 @@ class QuestionFragment : Fragment() {
         return view
     }
 
-    fun check(button: Button) {
+    private fun check(button: Button) {
         disableButtons()
         val green = Color.argb(100, 0, 255, 0)
         val red = Color.argb(100, 255, 0, 0)
@@ -82,6 +82,12 @@ class QuestionFragment : Fragment() {
             (activity as MainActivity).counter()
         } else {
             button.setBackgroundColor(red)
+            when {
+                firstAnswer.text == (Html.fromHtml((question as Question).correct_answer)) -> firstAnswer.setBackgroundColor(green)
+                secondAnswer.text == (Html.fromHtml((question as Question).correct_answer)) -> secondAnswer.setBackgroundColor(green)
+                thirdAnswer.text == (Html.fromHtml((question as Question).correct_answer)) -> thirdAnswer.setBackgroundColor(green)
+                fourthAnswer.text == (Html.fromHtml((question as Question).correct_answer)) -> fourthAnswer.setBackgroundColor(green)
+            }
         }
         handler = Handler()
         handler?.postDelayed({
@@ -93,7 +99,7 @@ class QuestionFragment : Fragment() {
         (activity as MainActivity).end()
     }
 
-    fun disableButtons() {
+    private fun disableButtons() {
         firstAnswer.isClickable = false
         secondAnswer.isClickable = false
         thirdAnswer.isClickable = false

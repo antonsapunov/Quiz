@@ -78,9 +78,7 @@ class MainActivity : FragmentActivity() {
             return QuestionFragment.newInstance(position, questionList[position])
         }
 
-        override fun getCount(): Int {
-            return PAGE_COUNT
-        }
+        override fun getCount(): Int = PAGE_COUNT
 
     }
 
