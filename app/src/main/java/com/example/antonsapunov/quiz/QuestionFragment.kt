@@ -12,19 +12,18 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import java.io.Serializable
 import java.util.*
 
 
 class QuestionFragment : Fragment() {
 
     private var pageNumber: Int? = null
-    private var question: Serializable? = null
+    private var question: Question? = null
     private var backColor: Int? = null
     private lateinit var firstAnswer: Button
     private lateinit var secondAnswer: Button
     private lateinit var thirdAnswer: Button
-    private lateinit var fourthAnswer:Button
+    private lateinit var fourthAnswer: Button
     private var handler: Handler? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,10 +48,10 @@ class QuestionFragment : Fragment() {
         thirdAnswer = view.findViewById<View>(R.id.third_answer) as Button
         fourthAnswer = view.findViewById<View>(R.id.fourth_answer) as Button
 
-        firstAnswer.text = Html.fromHtml((question as Question).answers[0])
-        secondAnswer.text = Html.fromHtml((question as Question).answers[1])
-        thirdAnswer.text = Html.fromHtml((question as Question).answers[2])
-        fourthAnswer.text = Html.fromHtml((question as Question).answers[3])
+        question?.let { firstAnswer.text = Html.fromHtml(it.answers[0]) }
+        question?.let { secondAnswer.text = Html.fromHtml(it.answers[1]) }
+        question?.let { thirdAnswer.text = Html.fromHtml(it.answers[2]) }
+        question?.let { fourthAnswer.text = Html.fromHtml(it.answers[3]) }
 
         firstAnswer.setOnClickListener {
             check(firstAnswer)
@@ -77,16 +76,19 @@ class QuestionFragment : Fragment() {
         disableButtons()
         val green = Color.argb(100, 0, 255, 0)
         val red = Color.argb(100, 255, 0, 0)
-        if (button.text == (Html.fromHtml((question as Question).correct_answer))) {
+
+        if (button.text == (Html.fromHtml((question?.correct_answer ?: "")))) {
             button.setBackgroundColor(green)
             (activity as MainActivity).counter()
         } else {
             button.setBackgroundColor(red)
-            when {
-                firstAnswer.text == (Html.fromHtml((question as Question).correct_answer)) -> firstAnswer.setBackgroundColor(green)
-                secondAnswer.text == (Html.fromHtml((question as Question).correct_answer)) -> secondAnswer.setBackgroundColor(green)
-                thirdAnswer.text == (Html.fromHtml((question as Question).correct_answer)) -> thirdAnswer.setBackgroundColor(green)
-                fourthAnswer.text == (Html.fromHtml((question as Question).correct_answer)) -> fourthAnswer.setBackgroundColor(green)
+            question?.let {
+                when {
+                    firstAnswer.text == (Html.fromHtml(it.correct_answer)) -> firstAnswer.setBackgroundColor(green)
+                    secondAnswer.text == (Html.fromHtml(it.correct_answer)) -> secondAnswer.setBackgroundColor(green)
+                    thirdAnswer.text == (Html.fromHtml(it.correct_answer)) -> thirdAnswer.setBackgroundColor(green)
+                    fourthAnswer.text == (Html.fromHtml(it.correct_answer)) -> fourthAnswer.setBackgroundColor(green)
+                }
             }
         }
         handler = Handler()
