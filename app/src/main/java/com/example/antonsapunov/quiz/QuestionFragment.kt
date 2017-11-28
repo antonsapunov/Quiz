@@ -12,6 +12,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import java.util.*
 
 
@@ -26,6 +29,8 @@ class QuestionFragment : Fragment() {
     private lateinit var fourthAnswer: Button
     private var handler: Handler? = null
 
+    private lateinit var mAdView : AdView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pageNumber = arguments.getInt(ARGUMENT_PAGE_NUMBER)
@@ -39,6 +44,37 @@ class QuestionFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater?.inflate(R.layout.fragment_question, null)
+
+        mAdView = view!!.findViewById(R.id.adView)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
+
+        mAdView.adListener = object: AdListener() {
+            override fun onAdLoaded() {
+                Log.d("tag", "load")// Code to be executed when an ad finishes loading.
+            }
+
+            override fun onAdFailedToLoad(errorCode : Int) {
+                Log.d("tag", "failToLoad $errorCode")// Code to be executed when an ad request fails.
+            }
+
+            override fun onAdOpened() {
+
+                Log.d("tag", "open")// Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+
+            override fun onAdLeftApplication() {
+                Log.d("tag", "load1")
+                // Code to be executed when the user has left the app.
+            }
+
+            override fun onAdClosed() {
+                Log.d("tag", "close")
+                // Code to be executed when when the user is about to return
+                // to the app after tapping on an ad.
+            }
+        }
 
         val questionPage = view?.findViewById<View>(R.id.questionPage) as TextView
         questionPage.text = Html.fromHtml((question as Question).question)
